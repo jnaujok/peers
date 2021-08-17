@@ -12,22 +12,30 @@ import net.sourceforge.peers.sip.syntaxencoding.SipUriSyntaxException;
 import net.sourceforge.peers.sip.transport.SipRequest;
 import net.sourceforge.peers.sip.transport.SipResponse;
 
-public class EventManager implements SipListener {
+public class EventManager implements SipListener
+{
 
-    private UserAgent userAgent;
-    private SipRequest sipRequest;
+    private UserAgent      userAgent;
+    private SipRequest     sipRequest;
     private CommandsReader commandsReader;
-    
-    public EventManager() throws SocketException {
-        Config config = new CustomConfig();
-        Logger logger = new FileLogger(null);
+
+    public EventManager() throws SocketException
+    {
+        Config            config            = new CustomConfig();
+        Logger            logger            = new FileLogger(null);
         JavaxSoundManager javaxSoundManager = new JavaxSoundManager(false, logger, null);
         userAgent = new UserAgent(this, config, logger, javaxSoundManager);
-        new Thread() {
-            public void run() {
-                try {
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
                     userAgent.register();
-                } catch (SipUriSyntaxException e) {
+                }
+                catch ( SipUriSyntaxException e )
+                {
                     e.printStackTrace();
                 }
             }
@@ -35,62 +43,83 @@ public class EventManager implements SipListener {
         commandsReader = new CommandsReader(this);
         commandsReader.start();
     }
-    
-    
+
     // commands methods
-    public void call(final String callee) {
-        new Thread() {
+    public void call(final String callee)
+    {
+        new Thread()
+        {
+
             @Override
-            public void run() {
-                try {
+            public void run()
+            {
+                try
+                {
                     sipRequest = userAgent.invite(callee, null);
-                } catch (SipUriSyntaxException e) {
+                }
+                catch ( SipUriSyntaxException e )
+                {
                     e.printStackTrace();
                 }
             }
         }.start();
     }
-    
-    public void hangup() {
-        new Thread() {
+
+    public void hangup()
+    {
+        new Thread()
+        {
+
             @Override
-            public void run() {
+            public void run()
+            {
                 userAgent.terminate(sipRequest);
             }
         }.start();
     }
-    
-    
+
     // SipListener methods
-    
-    @Override
-    public void registering(SipRequest sipRequest) { }
 
-    @Override
-    public void registerSuccessful(SipResponse sipResponse) { }
+    public void registering(SipRequest sipRequest)
+    {
+    }
 
-    @Override
-    public void registerFailed(SipResponse sipResponse) { }
+    public void registerSuccessful(SipResponse sipResponse)
+    {
+    }
 
-    @Override
-    public void incomingCall(SipRequest sipRequest, SipResponse provResponse) { }
+    public void registerFailed(SipResponse sipResponse)
+    {
+    }
 
-    @Override
-    public void remoteHangup(SipRequest sipRequest) { }
+    public void incomingCall(SipRequest sipRequest, SipResponse provResponse)
+    {
+    }
 
-    @Override
-    public void ringing(SipResponse sipResponse) { }
+    public void remoteHangup(SipRequest sipRequest)
+    {
+    }
 
-    @Override
-    public void calleePickup(SipResponse sipResponse) { }
+    public void ringing(SipResponse sipResponse)
+    {
+    }
 
-    @Override
-    public void error(SipResponse sipResponse) { }
+    public void calleePickup(SipResponse sipResponse)
+    {
+    }
 
-    public static void main(String[] args) {
-        try {
+    public void error(SipResponse sipResponse)
+    {
+    }
+
+    public static void main(String[] args)
+    {
+        try
+        {
             new EventManager();
-        } catch (SocketException e) {
+        }
+        catch ( SocketException e )
+        {
             e.printStackTrace();
         }
     }

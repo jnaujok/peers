@@ -1,20 +1,19 @@
 /*
-    This file is part of Peers, a java SIP softphone.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Copyright 2010-2013 Yohann Martineau 
+ * This file is part of Peers, a java SIP softphone.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright 2010-2013 Yohann Martineau
  */
 
 package net.sourceforge.peers.gui;
@@ -49,53 +48,64 @@ import net.sourceforge.peers.sip.Utils;
 import net.sourceforge.peers.sip.transport.SipRequest;
 import net.sourceforge.peers.sip.transport.SipResponse;
 
-public class MainFrame implements WindowListener, ActionListener {
+public class MainFrame implements WindowListener, ActionListener
+{
 
-    public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
+    public static void main(final String[] args)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            public void run()
+            {
                 createAndShowGUI(args);
             }
         });
     }
 
-    private static void createAndShowGUI(String[] args) {
+    private static void createAndShowGUI(String[] args)
+    {
         JFrame.setDefaultLookAndFeelDecorated(true);
         new MainFrame(args);
     }
 
-    private JFrame mainFrame;
-    private JPanel mainPanel;
-    private JPanel dialerPanel;
+    private JFrame     mainFrame;
+    private JPanel     mainPanel;
+    private JPanel     dialerPanel;
     private JTextField uri;
-    private JButton actionButton;
-    private JLabel statusLabel;
+    private JButton    actionButton;
+    private JLabel     statusLabel;
 
     private EventManager eventManager;
     private Registration registration;
-    private Logger logger;
+    private Logger       logger;
 
-    public MainFrame(final String[] args) {
+    public MainFrame(final String[] args)
+    {
         String peersHome = Utils.DEFAULT_PEERS_HOME;
-        if (args.length > 0) {
+        if ( args.length > 0 )
+        {
             peersHome = args[0];
         }
         logger = new FileLogger(peersHome);
         String lookAndFeelClassName = UIManager.getSystemLookAndFeelClassName();
-        try {
+        try
+        {
             UIManager.setLookAndFeel(lookAndFeelClassName);
-        } catch (Exception e) {
+        }
+        catch ( Exception e )
+        {
             logger.error("cannot change look and feel", e);
         }
-        final AbstractSoundManager soundManager = new JavaxSoundManager(
-                false, //TODO config.isMediaDebug(),
+        final AbstractSoundManager soundManager = new JavaxSoundManager(false,                              // TODO
+                                                                                                            // config.isMediaDebug(),
                 logger, peersHome);
-        String title = "";
-        if (!Utils.DEFAULT_PEERS_HOME.equals(peersHome)) {
+        String                     title        = "";
+        if ( !Utils.DEFAULT_PEERS_HOME.equals(peersHome) )
+        {
             title = peersHome;
         }
-        title += "/Peers: SIP User-Agent";
-        mainFrame = new JFrame(title);
+        title     += "/Peers: SIP User-Agent";
+        mainFrame  = new JFrame(title);
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         mainFrame.addWindowListener(this);
 
@@ -126,7 +136,7 @@ public class MainFrame implements WindowListener, ActionListener {
         contentPane.add(mainPanel);
 
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("File");
+        JMenu    menu    = new JMenu("File");
         menu.setMnemonic('F');
         JMenuItem menuItem = new JMenuItem("Exit");
         menuItem.setMnemonic('x');
@@ -134,24 +144,31 @@ public class MainFrame implements WindowListener, ActionListener {
 
         registration = new Registration(statusLabel, logger);
 
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
+        Thread thread = new Thread(new Runnable()
+        {
+            public void run()
+            {
                 String peersHome = Utils.DEFAULT_PEERS_HOME;
-                if (args.length > 0) {
+                if ( args.length > 0 )
+                {
                     peersHome = args[0];
                 }
-                eventManager = new EventManager(MainFrame.this,
-                        peersHome, logger, soundManager);
-                    eventManager.register();
+                eventManager = new EventManager(MainFrame.this, peersHome, logger,
+                        soundManager);
+                eventManager.register();
             }
         }, "gui-event-manager");
         thread.start();
 
-        try {
-            while (eventManager == null) {
+        try
+        {
+            while ( eventManager == null )
+            {
                 Thread.sleep(50);
             }
-        } catch (InterruptedException e) {
+        }
+        catch ( InterruptedException e )
+        {
             return;
         }
         menuItem.addActionListener(eventManager);
@@ -194,63 +211,67 @@ public class MainFrame implements WindowListener, ActionListener {
 
     // window events
 
-    @Override
-    public void windowActivated(WindowEvent e) {
+    public void windowActivated(WindowEvent e)
+    {
     }
 
-    @Override
-    public void windowClosed(WindowEvent e) {
+    public void windowClosed(WindowEvent e)
+    {
         eventManager.windowClosed();
     }
 
-    @Override
-    public void windowClosing(WindowEvent e) {
+    public void windowClosing(WindowEvent e)
+    {
     }
 
-    @Override
-    public void windowDeactivated(WindowEvent e) {
+    public void windowDeactivated(WindowEvent e)
+    {
     }
 
-    @Override
-    public void windowDeiconified(WindowEvent e) {
+    public void windowDeiconified(WindowEvent e)
+    {
     }
 
-    @Override
-    public void windowIconified(WindowEvent e) {
+    public void windowIconified(WindowEvent e)
+    {
     }
 
-    @Override
-    public void windowOpened(WindowEvent e) {
+    public void windowOpened(WindowEvent e)
+    {
     }
 
     // action event
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e)
+    {
         eventManager.callClicked(uri.getText());
     }
 
     // misc.
-    public void setLabelText(String text) {
+    public void setLabelText(String text)
+    {
         statusLabel.setText(text);
         mainFrame.pack();
     }
 
-    public void registerFailed(SipResponse sipResponse) {
+    public void registerFailed(SipResponse sipResponse)
+    {
         registration.registerFailed();
     }
 
-    public void registerSuccessful(SipResponse sipResponse) {
+    public void registerSuccessful(SipResponse sipResponse)
+    {
         registration.registerSuccessful();
     }
 
-    public void registering(SipRequest sipRequest) {
+    public void registering(SipRequest sipRequest)
+    {
         registration.registerSent();
     }
 
-    public void socketExceptionOnStartup() {
-        JOptionPane.showMessageDialog(mainFrame, "peers SIP port " +
-        		"unavailable, exiting");
+    public void socketExceptionOnStartup()
+    {
+        JOptionPane.showMessageDialog(mainFrame, "peers SIP port " + "unavailable, exiting");
         System.exit(1);
     }
 

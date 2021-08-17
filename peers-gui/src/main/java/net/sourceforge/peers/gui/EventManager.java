@@ -1,21 +1,20 @@
 /*
-    This file is part of Peers, a java SIP softphone.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Copyright 2010-2013 Yohann Martineau 
-*/
+ * This file is part of Peers, a java SIP softphone.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright 2010-2013 Yohann Martineau
+ */
 
 package net.sourceforge.peers.gui;
 
@@ -50,10 +49,11 @@ import net.sourceforge.peers.sip.transport.SipMessage;
 import net.sourceforge.peers.sip.transport.SipRequest;
 import net.sourceforge.peers.sip.transport.SipResponse;
 
-public class EventManager implements SipListener, MainFrameListener,
-        CallFrameListener, ActionListener {
+public class EventManager
+        implements SipListener, MainFrameListener, CallFrameListener, ActionListener
+{
 
-    public static final String PEERS_URL = "http://peers.sourceforge.net/";
+    public static final String PEERS_URL         = "http://peers.sourceforge.net/";
     public static final String PEERS_USER_MANUAL = PEERS_URL + "user_manual";
 
     public static final String ACTION_EXIT          = "Exit";
@@ -62,29 +62,33 @@ public class EventManager implements SipListener, MainFrameListener,
     public static final String ACTION_ABOUT         = "About";
     public static final String ACTION_DOCUMENTATION = "Documentation";
 
-    private UserAgent userAgent;
-    private MainFrame mainFrame;
-    private AccountFrame accountFrame;
+    private UserAgent              userAgent;
+    private MainFrame              mainFrame;
+    private AccountFrame           accountFrame;
     private Map<String, CallFrame> callFrames;
-    private boolean closed;
-    private Logger logger;
+    private boolean                closed;
+    private Logger                 logger;
 
-    public EventManager(MainFrame mainFrame, String peersHome,
-            Logger logger, AbstractSoundManager soundManager) {
+    public EventManager(MainFrame mainFrame, String peersHome, Logger logger,
+            AbstractSoundManager soundManager)
+    {
         this.mainFrame = mainFrame;
-        this.logger = logger;
-        callFrames = Collections.synchronizedMap(
-                new HashMap<String, CallFrame>());
-        closed = false;
+        this.logger    = logger;
+        callFrames     = Collections.synchronizedMap(new HashMap<String, CallFrame>());
+        closed         = false;
         // create sip stack
-        try {
+        try
+        {
             userAgent = new UserAgent(this, peersHome, logger, soundManager);
-        } catch (SocketException e) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    JOptionPane.showMessageDialog(null, "Peers sip port " +
-                    		"unavailable, about to leave", "Error",
+        }
+        catch ( SocketException e )
+        {
+            SwingUtilities.invokeLater(new Runnable()
+            {
+                public void run()
+                {
+                    JOptionPane.showMessageDialog(null,
+                            "Peers sip port " + "unavailable, about to leave", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     System.exit(1);
                 }
@@ -96,13 +100,15 @@ public class EventManager implements SipListener, MainFrameListener,
 
     // never update gui from a non-swing thread, thus using
     // SwingUtilties.invokeLater for each event coming from sip stack.
-    @Override
-    public void registering(final SipRequest sipRequest) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                if (accountFrame != null) {
+    public void registering(final SipRequest sipRequest)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                if ( accountFrame != null )
+                {
                     accountFrame.registering(sipRequest);
                 }
                 mainFrame.registering(sipRequest);
@@ -111,14 +117,16 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void registerFailed(final SipResponse sipResponse) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                //mainFrame.setLabelText("Registration failed");
-                if (accountFrame != null) {
+    public void registerFailed(final SipResponse sipResponse)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                // mainFrame.setLabelText("Registration failed");
+                if ( accountFrame != null )
+                {
                     accountFrame.registerFailed(sipResponse);
                 }
                 mainFrame.registerFailed(sipResponse);
@@ -127,18 +135,21 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void registerSuccessful(final SipResponse sipResponse) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                if (closed) {
+    public void registerSuccessful(final SipResponse sipResponse)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                if ( closed )
+                {
                     userAgent.close();
                     System.exit(0);
                     return;
                 }
-                if (accountFrame != null) {
+                if ( accountFrame != null )
+                {
                     accountFrame.registerSuccess(sipResponse);
                 }
                 mainFrame.registerSuccessful(sipResponse);
@@ -147,14 +158,16 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void calleePickup(final SipResponse sipResponse) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+    public void calleePickup(final SipResponse sipResponse)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 CallFrame callFrame = getCallFrame(sipResponse);
-                if (callFrame != null) {
+                if ( callFrame != null )
+                {
                     callFrame.calleePickup();
                 }
             }
@@ -162,14 +175,16 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void error(final SipResponse sipResponse) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+    public void error(final SipResponse sipResponse)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 CallFrame callFrame = getCallFrame(sipResponse);
-                if (callFrame != null) {
+                if ( callFrame != null )
+                {
                     callFrame.error(sipResponse);
                 }
             }
@@ -177,20 +192,20 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void incomingCall(final SipRequest sipRequest,
-            SipResponse provResponse) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                SipHeaders sipHeaders = sipRequest.getSipHeaders();
-                SipHeaderFieldName sipHeaderFieldName =
-                    new SipHeaderFieldName(RFC3261.HDR_FROM);
-                SipHeaderFieldValue from = sipHeaders.get(sipHeaderFieldName);
-                final String fromValue = from.getValue();
-                String callId = Utils.getMessageCallId(sipRequest);
-                CallFrame callFrame = new CallFrame(fromValue, callId,
+    public void incomingCall(final SipRequest sipRequest, SipResponse provResponse)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                SipHeaders          sipHeaders         = sipRequest.getSipHeaders();
+                SipHeaderFieldName  sipHeaderFieldName = new SipHeaderFieldName(
+                        RFC3261.HDR_FROM);
+                SipHeaderFieldValue from               = sipHeaders.get(sipHeaderFieldName);
+                final String        fromValue          = from.getValue();
+                String              callId             = Utils.getMessageCallId(sipRequest);
+                CallFrame           callFrame          = new CallFrame(fromValue, callId,
                         EventManager.this, logger);
                 callFrames.put(callId, callFrame);
                 callFrame.setSipRequest(sipRequest);
@@ -200,14 +215,16 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void remoteHangup(final SipRequest sipRequest) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+    public void remoteHangup(final SipRequest sipRequest)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 CallFrame callFrame = getCallFrame(sipRequest);
-                if (callFrame != null) {
+                if ( callFrame != null )
+                {
                     callFrame.remoteHangup();
                 }
             }
@@ -215,14 +232,16 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void ringing(final SipResponse sipResponse) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+    public void ringing(final SipResponse sipResponse)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 CallFrame callFrame = getCallFrame(sipResponse);
-                if (callFrame != null) {
+                if ( callFrame != null )
+                {
                     callFrame.ringing();
                 }
             }
@@ -232,22 +251,28 @@ public class EventManager implements SipListener, MainFrameListener,
 
     // main frame events
 
-    @Override
-    public void register() {
-        if (userAgent == null) {
+    public void register()
+    {
+        if ( userAgent == null )
+        {
             // if several peers instances are launched concurrently,
             // display error message and exit
             return;
         }
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 Config config = userAgent.getConfig();
-                if (config.getPassword() != null) {
-                    try {
+                if ( config.getPassword() != null )
+                {
+                    try
+                    {
                         userAgent.register();
-                    } catch (SipUriSyntaxException e) {
+                    }
+                    catch ( SipUriSyntaxException e )
+                    {
                         mainFrame.setLabelText(e.getMessage());
                     }
                 }
@@ -256,21 +281,24 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void callClicked(final String uri) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                String callId = Utils.generateCallID(
-                        userAgent.getConfig().getLocalInetAddress());
-                CallFrame callFrame = new CallFrame(uri, callId,
-                        EventManager.this, logger);
+    public void callClicked(final String uri)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                String    callId    = Utils
+                        .generateCallID(userAgent.getConfig().getLocalInetAddress());
+                CallFrame callFrame = new CallFrame(uri, callId, EventManager.this, logger);
                 callFrames.put(callId, callFrame);
                 SipRequest sipRequest;
-                try {
+                try
+                {
                     sipRequest = userAgent.invite(uri, callId);
-                } catch (SipUriSyntaxException e) {
+                }
+                catch ( SipUriSyntaxException e )
+                {
                     logger.error(e.getMessage(), e);
                     mainFrame.setLabelText(e.getMessage());
                     return;
@@ -282,21 +310,28 @@ public class EventManager implements SipListener, MainFrameListener,
 
     }
 
-    @Override
-    public void windowClosed() {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                try {
+    public void windowClosed()
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                try
+                {
                     userAgent.unregister();
-                } catch (Exception e) {
+                }
+                catch ( Exception e )
+                {
                     logger.error("error while unregistering", e);
                 }
                 closed = true;
-                try {
+                try
+                {
                     Thread.sleep(3 * RFC3261.TIMER_T1);
-                } catch (InterruptedException e) {
+                }
+                catch ( InterruptedException e )
+                {
                 }
                 System.exit(0);
             }
@@ -304,115 +339,149 @@ public class EventManager implements SipListener, MainFrameListener,
     }
 
     // call frame events
-    
-    @Override
-    public void hangupClicked(final SipRequest sipRequest) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+
+    public void hangupClicked(final SipRequest sipRequest)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 userAgent.terminate(sipRequest);
             }
         });
     }
 
-    @Override
-    public void pickupClicked(final SipRequest sipRequest) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                String callId = Utils.getMessageCallId(sipRequest);
+    public void pickupClicked(final SipRequest sipRequest)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
+                String        callId        = Utils.getMessageCallId(sipRequest);
                 DialogManager dialogManager = userAgent.getDialogManager();
-                Dialog dialog = dialogManager.getDialog(callId);
+                Dialog        dialog        = dialogManager.getDialog(callId);
                 userAgent.acceptCall(sipRequest, dialog);
             }
         });
     }
-    
-    @Override
-    public void busyHereClicked(final SipRequest sipRequest) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+
+    public void busyHereClicked(final SipRequest sipRequest)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 userAgent.rejectCall(sipRequest);
             }
         });
 
     }
-    
-    @Override
-    public void dtmf(final char digit) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
+
+    public void dtmf(final char digit)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+
+            public void run()
+            {
                 MediaManager mediaManager = userAgent.getMediaManager();
                 mediaManager.sendDtmf(digit);
             }
         });
     }
 
-    private CallFrame getCallFrame(SipMessage sipMessage) {
+    private CallFrame getCallFrame(SipMessage sipMessage)
+    {
         String callId = Utils.getMessageCallId(sipMessage);
         return callFrames.get(callId);
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e)
+    {
         String action = e.getActionCommand();
         logger.debug("gui actionPerformed() " + action);
         Runnable runnable = null;
-        if (ACTION_EXIT.equals(action)) {
-            runnable = new Runnable() {
-                @Override
-                public void run() {
+        if ( ACTION_EXIT.equals(action) )
+        {
+            runnable = new Runnable()
+            {
+
+                public void run()
+                {
                     windowClosed();
                 }
             };
-        } else if (ACTION_ACCOUNT.equals(action)) {
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (accountFrame == null ||
-                            !accountFrame.isDisplayable()) {
+        }
+        else if ( ACTION_ACCOUNT.equals(action) )
+        {
+            runnable = new Runnable()
+            {
+
+                public void run()
+                {
+                    if ( accountFrame == null || !accountFrame.isDisplayable() )
+                    {
                         accountFrame = new AccountFrame(userAgent, logger);
                         accountFrame.setVisible(true);
-                    } else {
+                    }
+                    else
+                    {
                         accountFrame.requestFocus();
                     }
                 }
             };
-        } else if (ACTION_PREFERENCES.equals(action)) {
-            runnable = new Runnable() {
-                @Override
-                public void run() {
+        }
+        else if ( ACTION_PREFERENCES.equals(action) )
+        {
+            runnable = new Runnable()
+            {
+
+                public void run()
+                {
                     JOptionPane.showMessageDialog(null, "Not implemented yet");
                 }
             };
-        } else if (ACTION_ABOUT.equals(action)) {
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    AboutFrame aboutFrame = new AboutFrame(
-                            userAgent.getPeersHome(), logger);
+        }
+        else if ( ACTION_ABOUT.equals(action) )
+        {
+            runnable = new Runnable()
+            {
+
+                public void run()
+                {
+                    AboutFrame aboutFrame = new AboutFrame(userAgent.getPeersHome(), logger);
                     aboutFrame.setVisible(true);
                 }
             };
-        } else if (ACTION_DOCUMENTATION.equals(action)) {
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
+        }
+        else if ( ACTION_DOCUMENTATION.equals(action) )
+        {
+            runnable = new Runnable()
+            {
+
+                public void run()
+                {
+                    try
+                    {
                         URI uri = new URI(PEERS_USER_MANUAL);
                         java.awt.Desktop.getDesktop().browse(uri);
-                    } catch (URISyntaxException e) {
+                    }
+                    catch ( URISyntaxException e )
+                    {
                         logger.error(e.getMessage(), e);
-                    } catch (IOException e) {
+                    }
+                    catch ( IOException e )
+                    {
                         logger.error(e.getMessage(), e);
                     }
                 }
             };
         }
-        if (runnable != null) {
+        if ( runnable != null )
+        {
             SwingUtilities.invokeLater(runnable);
         }
     }
